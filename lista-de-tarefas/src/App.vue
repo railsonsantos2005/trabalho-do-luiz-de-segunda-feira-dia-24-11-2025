@@ -11,7 +11,7 @@ const titulo = ref("");
 const tarefas = ref<Tarefa[]>([]);
 
 function load() {
-  tarefas.value = repo.list();
+  tarefas.value = repo.list().sort((a, b) => a.titulo.localeCompare(b.titulo));
 }
 
 onMounted(load);
@@ -28,6 +28,10 @@ function removeItem(id: string) {
   repo.remove(id);
   load();
 }
+function toggleItem(id: string) {
+  repo.toggle(id);
+  load();
+}
 </script>
 
 <template>
@@ -40,7 +44,8 @@ function removeItem(id: string) {
     </form>
 
     <ul class="lista">
-      <li v-for="t in tarefas" :key="t.id" class="item">
+      <li v-for="t in tarefas" :key="t.id" class="item" :class="{ concluida: t.concluida }">
+        <input type="checkbox" :checked="t.concluida" @change="toggleItem(t.id)" class="checkbox" />
         <span class="titulo">{{ t.titulo }}</span>
         <button class="excluir" @click="removeItem(t.id)">Excluir</button>
       </li>
